@@ -71,6 +71,68 @@
 </div>
 
 <script>
+    // وظيفة إظهار/إخفاء لوحة التحكم
+function toggleAdmin() {
+    let panel = document.getElementById('adminPanel');
+    panel.style.display = (panel.style.display === 'none') ? 'block' : 'none';
+    panel.scrollIntoView({ behavior: 'smooth' });
+}
+
+// مصفوفة الأفلام (تحميل المخزن مسبقاً أو مصفوفة فارغة)
+let myMovies = JSON.parse(localStorage.getItem('customMovies')) || [];
+
+// وظيفة إضافة فيلم جديد
+function addNewMovie() {
+    const title = document.getElementById('newTitle').value;
+    const img = document.getElementById('newImg').value || 'https://via.placeholder.com';
+    const rating = document.getElementById('newRating').value;
+    const desc = document.getElementById('newDesc').value;
+
+    if(title && desc) {
+        const newMovie = {
+            id: 'custom_' + Date.now(),
+            title: title,
+            img: img,
+            rating: rating,
+            desc: desc
+        };
+
+        myMovies.push(newMovie);
+        localStorage.setItem('customMovies', JSON.stringify(myMovies));
+        alert("تم إضافة الفيلم بنجاح!");
+        location.reload(); // إعادة تحميل لرؤية الفيلم الجديد
+    } else {
+        alert("يرجى إدخال الاسم والوصف على الأقل");
+    }
+}
+
+// كود لعرض الأفلام المضافة من لوحة التحكم في القائمة الرئيسية
+function displayCustomMovies() {
+    const container = document.getElementById('movieList'); // تأكد أن هذا هو ID حاوية الأفلام
+    myMovies.forEach(movie => {
+        const movieHTML = `
+            <div class="poster" id="${movie.id}" onclick="openModal('${movie.title}', '${movie.desc}', '${movie.rating}')">
+                <span class="fav-icon" onclick="event.stopPropagation(); toggleFav('${movie.id}', '${movie.title}', '${movie.img}')">❤</span>
+                <img src="${movie.img}">
+                <div class="poster-info">
+                    <span class="poster-title">${movie.title}</span>
+                    <div style="color:gold; font-size:12px;">★ ${movie.rating}</div>
+                </div>
+            </div>`;
+        container.insertAdjacentHTML('afterbegin', movieHTML);
+    });
+}
+
+// استدعاء الوظيفة عند تحميل الصفحة
+window.addEventListener('DOMContentLoaded', displayCustomMovies);
+
+function clearAllMovies() {
+    if(confirm("هل أنت متأكد من حذف كل الأفلام التي أضفتها؟")) {
+        localStorage.removeItem('customMovies');
+        location.reload();
+    }
+}
+
     // جلب البيانات المخزنة عند فتح الصفحة
     let favorites = JSON.parse(localStorage.getItem('myMovies')) || [];
 
