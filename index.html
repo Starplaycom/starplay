@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سينما برو | الحفظ الذكي</title>
+    <style>
+        :root { --primary: #ff0000; --bg-dark: #0a0a0a; --gold: #ffc107; }
+        body { margin: 0; font-family: 'Segoe UI', sans-serif; background-color: var(--bg-dark); color: white; }
+
+        header { display: flex; justify-content: space-between; align-items: center; padding: 15px 4%; background: #000; position: fixed; width: 92%; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .nav-btn { cursor: pointer; background: #222; padding: 5px 15px; border-radius: 20px; font-size: 13px; transition: 0.3s; }
+        .nav-btn:hover { background: var(--primary); }
+
+        .main-content { padding-top: 100px; padding-bottom: 50px; }
+        .row { margin: 20px 4%; }
+        .posters-container { display: flex; flex-wrap: wrap; gap: 20px; }
+        
+        .poster {
+            flex: 0 0 150px; background: #1a1a1a; border-radius: 10px;
+            cursor: pointer; transition: 0.3s; position: relative; padding-bottom: 10px;
+        }
+        .poster:hover { transform: scale(1.05); }
+        .poster img { width: 100%; height: 210px; object-fit: cover; border-radius: 10px 10px 0 0; }
+        
+        .fav-icon {
+            position: absolute; top: 8px; right: 8px; font-size: 22px;
+            color: rgba(255,255,255,0.5); cursor: pointer; transition: 0.3s;
+        }
+        .fav-icon.active { color: var(--primary); text-shadow: 0 0 10px var(--primary); }
+
+        #wishlistSection { display: none; background: #111; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #333; }
+        
+        .poster-title { font-size: 14px; text-align: center; display: block; margin-top: 8px; }
+    </style>
+</head>
+<body>
+
+<header>
+    <div style="color: var(--primary); font-weight: 900; font-size: 24px;">CINEMA PRO</div>
+    <div>
+        <span class="nav-btn" onclick="location.reload()">🏠 الرئيسية</span>
+        <span class="nav-btn" onclick="toggleWishlist()">❤️ المفضلة (<span id="favCount">0</span>)</span>
+    </div>
+</header>
+
+<div class="main-content">
+    <div class="row">
+        <!-- قسم المفضلة -->
+        <div id="wishlistSection">
+            <h3 style="color: var(--gold);">قائمتك المختارة ✨</h3>
+            <div class="posters-container" id="wishlistItems"></div>
+        </div>
+
+        <h2>أفلام مقترحة</h2>
+        <div class="posters-container">
+            <!-- فيلم 1 -->
+            <div class="poster" id="movie_1">
+                <span class="fav-icon" onclick="toggleFav('movie_1', 'الجوكر', 'https://via.placeholder.com')">❤</span>
+                <img src="https://via.placeholder.com" alt="Joker">
+                <span class="poster-title">الجوكر</span>
+            </div>
+            <!-- فيلم 2 -->
+            <div class="poster" id="movie_2">
+                <span class="fav-icon" onclick="toggleFav('movie_2', 'مملكة الخواتم', 'https://via.placeholder.com')">❤</span>
+                <img src="https://via.placeholder.com" alt="LOTR">
+                <span class="poster-title">مملكة الخواتم</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // جلب البيانات المخزنة عند فتح الصفحة
+    let favorites = JSON.parse(localStorage.getItem('myMovies')) || [];
+
+    // تحديث الواجهة فور التحميل
+    document.addEventListener("DOMContentLoaded", () => {
+        updateUI();
+    });
+
+    function toggleFav(id, title, img) {
+        const index = favorites.findIndex(item => item.id === id);
+        
+        if (index === -1) {
+            favorites.push({ id, title, img });
+        } else {
+            favorites.splice(index, 1);
+        }
+
+        // حفظ القائمة في ذاكرة المتصفح
+        localStorage.setItem('myMovies', JSON.stringify(favorites));
+        updateUI();
+    }
+
+    function updateUI() {
+        document.getElementById('favCount').innerText = favorites.length;
+        
+        // تحديث شكل القلوب في الصفحة الرئيسية
+        document.querySelectorAll('.fav-icon').forEach(icon => {
+            const parentId = icon.parentElement.id;
+            if (favorites.some(f => f.id === parentId)) {
+                icon.classList.add('active');
+            } else {
+                icon.classList.remove('active');
+            }
+        });
+
+        // تحديث محتوى قسم المفضلة
+        const wishContainer = document.getElementById('wishlistItems');
+        wishContainer.innerHTML = '';
+        favorites.forEach(item => {
+            wishContainer.innerHTML += `
+                <div class="poster">
+                    <img src="${item.img}">
+                    <span class="poster-title">${item.title}</span>
+                </div>`;
+        });
+    }
+
+    function toggleWishlist() {
+        const sec = document.getElementById('wishlistSection');
+        sec.style.display = (sec.style.display === 'none' || sec.style.display === '') ? 'block' : 'none';
+    }
+</script>
+
+</body>
+</html>
