@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+٨<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -123,6 +123,23 @@
         sec.style.display = (sec.style.display === 'none' || sec.style.display === '') ? 'block' : 'none';
     }
 </script>
+<!-- لوحة التحكم (مخفية وتظهر عند الضغط على زر معين) -->
+<div id="adminPanel" style="display:none; background:#222; padding:20px; border-top:2px solid var(--primary); margin-top:50px;">
+    <h2 style="color:var(--primary)">إضافة فيلم جديد 🎬</h2>
+    <div style="display:grid; gap:10px; max-width:500px;">
+        <input type="text" id="newTitle" placeholder="اسم الفيلم" style="padding:10px;">
+        <input type="text" id="newImg" placeholder="رابط صورة البوستر">
+        <input type="text" id="newRating" placeholder="التقييم (مثلاً 4.5)">
+        <textarea id="newDesc" placeholder="وصف الفيلم" rows="3" style="padding:10px;"></textarea>
+        <button onclick="addNewMovie()" style="background:green; color:white; padding:10px; border:none; cursor:pointer; font-weight:bold;">حفظ ونشر الفيلم ✅</button>
+        <button onclick="clearAllMovies()" style="background:gray; color:white; border:none; padding:5px; font-size:10px; margin-top:20px;">حذف جميع الأفلام المضافة 🗑️</button>
+    </div>
+</div>
+
+<!-- زر سري لفتح لوحة التحكم (يُفضل وضعه في الفوتر) -->
+<footer style="text-align:center; padding:20px; opacity:0.3;">
+    <span onclick="toggleAdmin()" style="cursor:pointer;">© إدارة المحتوى</span>
+</footer>
 
 </body>
 </html>
